@@ -86,7 +86,7 @@ utils.semaphore = function (wait, done) {
  * Note: variables not declared and calculated within func will not
  * be evaluated.  (aka. the function should not accept arguments.)
  */
-glazrfn.functionToString = function (func) {
+utils.functionToString = function (func) {
   return '(' + func + ')();';
 };
 
