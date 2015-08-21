@@ -35,7 +35,6 @@ utils.matchExists = function (array1, array2) {
   return false;
 };
 
-
 /**
  * Recursively merges two objects.
  *
@@ -88,33 +87,6 @@ utils.semaphore = function (wait, done) {
  */
 utils.functionToString = function (func) {
   return '(' + func + ')();';
-};
-/**
- * Used to retrieve the contents of the body of http request.
- * The contents will be passed to the callback.
- *
- * @param {Request} req - An Express req (Request) object
- * @param {getBody~success} callback - function to pass the body to upon completion of read.
- */
-utils.getBody = function (req, callback) {
-  if (req.method !== 'POST') {
-    callback(null);
-    return;
-  }
-  var body = '';
-  req.on('data', function (data) {
-    body += data;
-
-    if (body.length > 1e6) {
-      // Flood attack or faulty client, nuke request
-      req.connection.destroy();
-      // This should probably go to err, not log.
-      utils.log("request body exceeded max length");
-    }
-  });
-  req.on('end', function () {
-    callback(body);
-  });
 };
 
 /**

@@ -33,67 +33,6 @@
       });
     });
 
-    describe("#getBody()", function () {
-      describe("Non-POST request", function () {
-        it("should pass 'null' to the callback", function () {
-          var theCallback = this.sinon.spy();
-          utils.getBody({method: 'Not POST'}, theCallback);
-          (theCallback.args[0][0] === null).should.equal(true);
-        });
-      });
-      describe("POST request", function () {
-        beforeEach(function () {
-          /*jslint debug:true*/
-          vars.req = this.sinon.stub();
-          vars.req.method = 'POST';
-          vars.req.on = function () {};
-        });
-
-        describe("body buffering", function () {
-          it("should destroy flooded connections", function () {
-
-            vars.req.connection = {};
-            vars.req.connection.destroy = this.sinon.spy();
-
-            this.sinon.stub(vars.req, 'on', function (event, callback) {
-              /*jslint unparam: true*/
-              var floodData = 'flood';
-
-              // Make a very long string.
-              do {
-                floodData = floodData + floodData;
-              } while (floodData.length <= 1e6);
-
-              callback(floodData);
-            });
-
-            // Send the very long string.
-            /*jslint debug:true*/
-            utils.getBody(vars.req, function () {});
-
-            vars.req.connection.destroy.called.should.equal(true);
-          });
-        });
-        describe("body complete", function () {
-          it("should pass the body to the callback", function () {
-            var eventsToHandlers = {},
-              callback = this.sinon.spy(),
-              reqData = 'some data';
-
-            this.sinon.stub(vars.req, 'on', function (event, callback) {
-              eventsToHandlers[event] = callback;
-            });
-
-            utils.getBody(vars.req, callback);
-            eventsToHandlers.data(reqData);
-            eventsToHandlers.end();
-
-            callback.args[0][0].should.equal(reqData);
-          });
-        });
-      });
-    });
-
     describe("#merge()", function () {
       describe("no common keys", function () {
         it("should return an object with all key-vals from both input objects", function () {
