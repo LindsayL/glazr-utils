@@ -75,4 +75,19 @@ utils.semaphore = function (wait, done) {
   };
 };
 
+/**
+ * Returns a string which contains an anonymous function invocation
+ * where the anonymous function contains the contents of func.
+ *
+ * @type {Function}
+ * @param {Function} func - A function whose contents will be stringified
+ * @return {String} - Stringified function within a self-invoking closure
+ *
+ * Note: variables not declared and calculated within func will not
+ * be evaluated.  (aka. the function should not accept arguments.)
+ */
+glazrfn.functionToString = function (func) {
+  return '(' + func + ')();';
+};
+
 module.exports = utils;
