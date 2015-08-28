@@ -65,11 +65,27 @@ utils.merge = function (obj1, obj2) {
   return obj1;
 };
 
-utils.semaphore = function (wait, done) {
-  return function () {
-    wait -= 1;
-    if (wait === 0) {
-      done();
+/**
+ * Implements a barrier that waits for a specified number of calls before
+ * calling it's callback
+ *
+ * @param syncCalls - The number of calls before we can proceed.
+ * @param callback(error) - The function to be called once the required number of
+ * syncCalls have been made.  If any errors were reported they are passed as
+ * an argument to the callback.
+ * @returns {Function} - The function to be called that will decrement the
+ * syncCalls.  Accepts an argument as error.  Should be called without an arg
+ * to signify success.
+ */
+utils.syncBarrier = function(syncCalls, callback) {
+  var errors = '';
+  return function (err) {
+    if (err) {
+      errors += err;
+    }
+    syncCalls -= 1;
+    if (syncCalls === 0) {
+      callback(errors);
     }
   };
 };

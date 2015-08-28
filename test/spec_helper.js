@@ -15,11 +15,7 @@ global.vars = {};
     path = global.path,
     fse = global.fse,
     sinon = global.sinon,
-    vars = global.vars,
-    DEFAULT_ORIGINAL_RESOURCE_DIR = path.resolve(path.join(__dirname, 'resources/')),
-    DEFAULT_RESOURCE_DIR = path.resolve(path.join(__dirname, 'tempResources/'));
-
-  fse.copySync(DEFAULT_ORIGINAL_RESOURCE_DIR, DEFAULT_RESOURCE_DIR, {clobber: true});
+    vars = global.vars;
 
   beforeEach(function () {
     vars.config = {

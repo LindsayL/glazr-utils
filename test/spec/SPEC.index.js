@@ -6,6 +6,7 @@
   'use strict';
 
   require('../spec_helper');
+
   var
     utils = require('../../index.js');
 
@@ -66,6 +67,25 @@
         });
       });
     });
+
+    describe('#syncBarrier', function () {
+      it('should exist', function (done) {
+        (!!utils.syncBarrier).should.equal(true);
+        done();
+      });
+      it('should not use callback until it has been called "n" number of times', function (done) {
+        var count = 5,
+          sem = utils.syncBarrier(count, function () {
+            count.should.equal(0);
+            done();
+          });
+        do {
+          count -= 1;
+          sem();
+        } while (count > 0);
+      });
+    });
+
   });
 
 }());
