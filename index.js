@@ -84,7 +84,7 @@ utils.syncBarrier = function(syncCalls, callback) {
       errors += err;
     }
     syncCalls -= 1;
-    if (syncCalls === 0) {
+    if (syncCalls === 0 && callback) {
       callback(errors);
     }
   };
