@@ -154,4 +154,29 @@ utils.getScriptsAppendString = function (host, relUrls) {
   return func;
 };
 
+/**
+ * Iterates through an array or params of an object
+ *
+ * @param object/array - The object or array you wish to iterate through
+ * @param callback(index, array[index]) - called for each iteration
+ */
+// TODO Test
+utils.forEach = function (object, callback) {
+  var
+    key;
+
+  key = Object.prototype.toString.call(object);
+  if (key === '[object Array]') {
+    for (key = 0; key < object.length; key += 1) {
+      callback(key, object[key]);
+    }
+  } else if (key === '[object Object]') {
+    for (key in object) {
+      if (object.hasOwnProperty(key)) {
+        callback(key, object[key]);
+      }
+    }
+  }
+};
+
 module.exports = utils;
