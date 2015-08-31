@@ -89,6 +89,7 @@ utils.syncBarrier = function(syncCalls, callback) {
     }
     syncCalls -= 1;
     if (syncCalls === 0 && callback) {
+      errors = errors? errors:undefined;  // If no errors returned undefined rather than empty string.
       callback(errors);
     }
   };
