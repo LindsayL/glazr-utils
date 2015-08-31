@@ -1,6 +1,6 @@
 {
   "name": "glazr-utils",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "javascript utilities to support glazr",
   "main": "index.js",
   "scripts": {

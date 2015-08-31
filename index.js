@@ -77,7 +77,11 @@ utils.merge = function (obj1, obj2) {
  * syncCalls.  Accepts an argument as error.  Should be called without an arg
  * to signify success.
  */
+// TODO test error handling, and invalid inputs
 utils.syncBarrier = function(syncCalls, callback) {
+  if (syncCalls < 0) {
+    throw new Error('Invalid number of syncCalls');
+  }
   var errors = '';
   return function (err) {
     if (err) {
@@ -106,8 +110,48 @@ utils.functionToString = function (func) {
 };
 
 /**
- * Callback used by utils.getBody
- * @callback getBody~success
- * @param {String} body
+ * Creates a string which contains a function that generates a script element
+ * with src = 'url' and async = false, and appends to the body.
+ *
+ * @param {String} url - source for script tag.
+ * @return {String} -  An anonymous function that when evaluated will append a
+ * script tag to the body with src='url'.
  */
+// TODO Test
+utils.getScriptAppendString = function (url) {
+  var func = this.functionToString(function () {
+    /*jslint browser: true*/
+    var script = document.createElement('script');
+    script.async = false;
+    script.src = '!_url_here_!';
+    document.body.appendChild(script);
+  });
+  //TODO: Use standardized string templating format (what about a closure? JD)
+  return func.replace('!_url_here_!', url);
+};
+
+/**
+ * Generates a string which contains an anonymous function which will inject
+ * script tags for all the relUrls.  The script tags are synchronous, so the
+ * order they are in the array is the order they will be loaded.
+ *
+ * @param {String} host - The url of the host for the required scripts.
+ * (Eg. http://localhost:8347)
+ * @param {Array} relUrls - An array of the relative urls for scripts.  They
+ * should all be strings.  (Eg. ['/some.js', 'someOtherDependant.js'])
+ * @return {String} - The function which appends all the requested scripts.
+ */
+// TODO Test
+utils.getScriptsAppendString = function (host, relUrls) {
+  var
+    i,
+    func = '';
+
+  for (i = 0; i < relUrls.length; i += 1) {
+    func += this.getScriptAppendString(host + relUrls[i]);
+  }
+
+  return func;
+};
+
 module.exports = utils;

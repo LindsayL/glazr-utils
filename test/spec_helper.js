@@ -1,6 +1,8 @@
 /*jslint unparam: true, stupid: true, nomen: true*/
 /*globals global, beforeEach, afterEach, describe, __dirname*/
 
+// TODO clean.
+
 global.should = require('should');
 global.fse = require('fs-extra');
 global.path = require('path');
