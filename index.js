@@ -124,11 +124,11 @@ utils.createCustomScript = function (content) {
     /*jslint browser: true*/
     var script = document.createElement('script');
     script.async = false;
-    script.innerHTML = content;
+    script.innerHTML = '!_content_here_!';
     document.body.appendChild(script);
   });
   //TODO: Use standardized string templating format (what about a closure? JD)
-  return func;
+  return func.replace('!_content_here_!', content);
 };
 
 /**
