@@ -170,7 +170,7 @@ utils.createInjectScripts = function (host, relUrls) {
     func = '';
 
   for (i = 0; i < relUrls.length; i += 1) {
-    func += this.getScriptAppendString(host + relUrls[i]);
+    func += this.createInjectScript(host + relUrls[i]);
   }
 
   return func;
