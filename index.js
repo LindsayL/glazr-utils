@@ -112,6 +112,27 @@ utils.functionToString = function (func) {
 
 /**
  * Creates a string which contains a function that generates a script element
+ * with innerHTML = 'content' and async = false, and appends to the body.
+ *
+ * @param {String} content - The javascript to put in innerHTML
+ * @return {String} -  An anonymous function that when evaluated will append a
+ * script tag to the body with innerHTML='content'.
+ */
+// TODO Test
+utils.createCustomScript = function (content) {
+  var func = this.functionToString(function () {
+    /*jslint browser: true*/
+    var script = document.createElement('script');
+    script.async = false;
+    script.innerHTML = content;
+    document.body.appendChild(script);
+  });
+  //TODO: Use standardized string templating format (what about a closure? JD)
+  return func;
+};
+
+/**
+ * Creates a string which contains a function that generates a script element
  * with src = 'url' and async = false, and appends to the body.
  *
  * @param {String} url - source for script tag.
@@ -119,7 +140,7 @@ utils.functionToString = function (func) {
  * script tag to the body with src='url'.
  */
 // TODO Test
-utils.getScriptAppendString = function (url) {
+utils.createInjectScript = function (url) {
   var func = this.functionToString(function () {
     /*jslint browser: true*/
     var script = document.createElement('script');
@@ -143,7 +164,7 @@ utils.getScriptAppendString = function (url) {
  * @return {String} - The function which appends all the requested scripts.
  */
 // TODO Test
-utils.getScriptsAppendString = function (host, relUrls) {
+utils.createInjectScripts = function (host, relUrls) {
   var
     i,
     func = '';
