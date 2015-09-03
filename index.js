@@ -124,11 +124,10 @@ utils.createCustomScript = function (content) {
     /*jslint browser: true*/
     var script = document.createElement('script');
     script.async = false;
-    script.innerHTML = '!_content_here_!';
+    script.innerHTML = '{{content}}';
     document.body.appendChild(script);
   });
-  //TODO: Use standardized string templating format (what about a closure? JD)
-  return func.replace('!_content_here_!', content);
+  return func.replace('{{content}}', content);
 };
 
 /**
@@ -145,11 +144,10 @@ utils.createInjectScript = function (url) {
     /*jslint browser: true*/
     var script = document.createElement('script');
     script.async = false;
-    script.src = '!_url_here_!';
+    script.src = '{{url}}';
     document.body.appendChild(script);
   });
-  //TODO: Use standardized string templating format (what about a closure? JD)
-  return func.replace('!_url_here_!', url);
+  return func.replace('{{url}}', url);
 };
 
 /**
