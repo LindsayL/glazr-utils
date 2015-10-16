@@ -8,6 +8,7 @@
   require('../spec_helper');
 
   var
+    should = require('should'),
     utils = require('../../index.js');
 
   describe("utils", function () {
@@ -73,16 +74,23 @@
         (!!utils.syncBarrier).should.equal(true);
         done();
       });
+      it('should call the callback immediately if the count is 0', function (done) {
+        utils.syncBarrier(0, function (err) {
+          should.not.exist(err);
+          done();
+        });
+      });
       it('should not use callback until it has been called "n" number of times', function (done) {
         var count = 5,
-          sem = utils.syncBarrier(count, function () {
+          sem = utils.syncBarrier(count, function (err) {
             count.should.equal(0);
+            should.not.exist(err);
             done();
           });
-        do {
+        while (count > 0) {
           count -= 1;
           sem();
-        } while (count > 0);
+        }
       });
     });
 

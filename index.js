@@ -82,6 +82,9 @@ utils.syncBarrier = function(syncCalls, callback) {
   if (syncCalls < 0) {
     throw new Error('Invalid number of syncCalls');
   }
+  if (syncCalls === 0) {
+    return callback();
+  }
   var errors = '';
   return function (err) {
     if (err) {
