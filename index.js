@@ -99,6 +99,51 @@ utils.syncBarrier = function(syncCalls, callback) {
 };
 
 /**
+ * Call the callback once the named mutex is obtained.  Must call the function
+ * passed as an argument in the callback to release the mutex.
+ *
+ * @param {string} mutexName - The name of the mutex to lock.
+ * @param {function} callback(done) - The stuff to do once mutex is acquired.  Must call the
+ * done function when done with the mutex.
+ */
+utils.getMutex = (function () {
+  var
+    id = 0,
+    mutexesInUse = {},
+    mutexWaitLists = {},
+    getMutexWaitId = function () {
+      id += 1;
+      return id;
+    };
+  return function (mutexName, callback) {
+    // assign id and add to list
+    var reqId = getMutexWaitId();
+    mutexWaitLists[mutexName] = mutexWaitLists[mutexName] || [];
+    mutexWaitLists[mutexName].push(reqId);
+
+    // Now wait for turn
+    utils.doWhen(function () {return (mutexWaitLists[mutexName][0] === reqId && !mutexesInUse[mutexName]); },
+      function () {
+        // Got the mutex, call callback with mutex release function
+        mutexesInUse[mutexName] = true;
+        callback(function () {
+          mutexWaitLists[mutexName].splice(0, 1);
+          mutexesInUse[mutexName] = false;
+        });
+      });
+  };
+}());
+
+utils.doWhen = function (cond, callback) {
+  var interval = setInterval(function () {
+    if (cond()) {
+      clearInterval(interval);
+      callback();
+    }
+  }, 0);
+};
+
+/**
  * Returns a string which contains an anonymous function invocation
  * where the anonymous function contains the contents of func.
  *

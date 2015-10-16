@@ -94,6 +94,20 @@
       });
     });
 
+    describe('#doWhen', function () {
+      it('should exist', function (done) {
+        (!!utils.doWhen).should.equal(true);
+        done();
+      });
+    });
+
+    describe('#getMutex', function () {
+      it('should exist', function (done) {
+        (!!utils.getMutex).should.equal(true);
+        done();
+      });
+    });
+
   });
 
 }());
