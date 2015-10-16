@@ -99,12 +99,55 @@
         (!!utils.doWhen).should.equal(true);
         done();
       });
+      it('should wait until the condition becomes true', function (done) {
+        var
+          waitingVar = false;
+        utils.doWhen(function () {return waitingVar;}, function () {
+          waitingVar.should.equal(true);
+          done();
+        });
+
+        setTimeout(function () {
+          waitingVar = true;
+        }, 50);
+      });
     });
 
     describe('#getMutex', function () {
       it('should exist', function (done) {
         (!!utils.getMutex).should.equal(true);
         done();
+      });
+      describe('mutex not in use', function () {
+        it('should execute the callback immediately', function (done) {
+          utils.getMutex('blah', function (releaseMutex) {
+            releaseMutex();
+            done();
+          });
+        });
+      });
+      describe('mutex is in use', function () {
+        var
+          mutexName = 'mutex',
+          firstReleased = false,
+          releaseMutex1;
+        beforeEach(function (done) {
+          utils.getMutex(mutexName, function (releaseMutex) {
+            releaseMutex1 = function () {
+              firstReleased = true;
+              releaseMutex();
+            };
+            done();
+          });
+        });
+        it('should execute the callback after releasing the first call', function (done) {
+          utils.getMutex(mutexName, function (releaseMutex) {
+            releaseMutex();
+            firstReleased.should.equal(true);
+            done();
+          });
+          releaseMutex1();
+        });
       });
     });
 

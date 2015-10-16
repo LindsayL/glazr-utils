@@ -122,13 +122,20 @@ utils.getMutex = (function () {
     mutexWaitLists[mutexName].push(reqId);
 
     // Now wait for turn
-    utils.doWhen(function () {return (mutexWaitLists[mutexName][0] === reqId && !mutexesInUse[mutexName]); },
+    utils.doWhen(
+      function () {
+        return (mutexWaitLists[mutexName][0] === reqId && !mutexesInUse[mutexName]);
+      },
       function () {
         // Got the mutex, call callback with mutex release function
         mutexesInUse[mutexName] = true;
         callback(function () {
           mutexWaitLists[mutexName].splice(0, 1);
           mutexesInUse[mutexName] = false;
+          if (mutexWaitLists[mutexName].length === 0) {
+            delete mutexWaitLists[mutexName];
+            delete mutexesInUse[mutexName];
+          }
         });
       });
   };
