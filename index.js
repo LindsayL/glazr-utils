@@ -84,6 +84,9 @@ utils.syncBarrier = function(syncCalls, callback) {
   if (syncCalls < 0) {
     throw new Error('Invalid number of syncCalls');
   }
+  if (syncCalls === 0) {
+    return callback();
+  }
   var errors = '';
   return function (err) {
     if (err) {
@@ -95,6 +98,58 @@ utils.syncBarrier = function(syncCalls, callback) {
       callback(errors);
     }
   };
+};
+
+/**
+ * Call the callback once the named mutex is obtained.  Must call the function
+ * passed as an argument in the callback to release the mutex.
+ *
+ * @param {string} mutexName - The name of the mutex to lock.
+ * @param {function} callback(done) - The stuff to do once mutex is acquired.  Must call the
+ * done function when done with the mutex.
+ */
+utils.getMutex = (function () {
+  var
+    id = 0,
+    mutexesInUse = {},
+    mutexWaitLists = {},
+    getMutexWaitId = function () {
+      id += 1;
+      return id;
+    };
+  return function (mutexName, callback) {
+    // assign id and add to list
+    var reqId = getMutexWaitId();
+    mutexWaitLists[mutexName] = mutexWaitLists[mutexName] || [];
+    mutexWaitLists[mutexName].push(reqId);
+
+    // Now wait for turn
+    utils.doWhen(
+      function () {
+        return (mutexWaitLists[mutexName][0] === reqId && !mutexesInUse[mutexName]);
+      },
+      function () {
+        // Got the mutex, call callback with mutex release function
+        mutexesInUse[mutexName] = true;
+        callback(function () {
+          mutexWaitLists[mutexName].splice(0, 1);
+          mutexesInUse[mutexName] = false;
+          if (mutexWaitLists[mutexName].length === 0) {
+            delete mutexWaitLists[mutexName];
+            delete mutexesInUse[mutexName];
+          }
+        });
+      });
+  };
+}());
+
+utils.doWhen = function (cond, callback) {
+  var interval = setInterval(function () {
+    if (cond()) {
+      clearInterval(interval);
+      callback();
+    }
+  }, 0);
 };
 
 /**
@@ -126,11 +181,10 @@ utils.createCustomScript = function (content) {
     /*jslint browser: true*/
     var script = document.createElement('script');
     script.async = false;
-    script.innerHTML = '!_content_here_!';
+    script.innerHTML = '{{content}}';
     document.body.appendChild(script);
   });
-  //TODO: Use standardized string templating format (what about a closure? JD)
-  return func.replace('!_content_here_!', content);
+  return func.replace('{{content}}', content);
 };
 
 /**
@@ -147,11 +201,10 @@ utils.createInjectScript = function (url) {
     /*jslint browser: true*/
     var script = document.createElement('script');
     script.async = false;
-    script.src = '!_url_here_!';
+    script.src = '{{url}}';
     document.body.appendChild(script);
   });
-  //TODO: Use standardized string templating format (what about a closure? JD)
-  return func.replace('!_url_here_!', url);
+  return func.replace('{{url}}', url);
 };
 
 /**

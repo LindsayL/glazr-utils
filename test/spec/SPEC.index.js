@@ -8,6 +8,7 @@
   require('../spec_helper');
 
   var
+    should = require('should'),
     utils = require('../../index.js');
 
   describe("utils", function () {
@@ -93,16 +94,80 @@
         (!!utils.syncBarrier).should.equal(true);
         done();
       });
+      it('should call the callback immediately if the count is 0', function (done) {
+        utils.syncBarrier(0, function (err) {
+          should.not.exist(err);
+          done();
+        });
+      });
       it('should not use callback until it has been called "n" number of times', function (done) {
         var count = 5,
-          sem = utils.syncBarrier(count, function () {
+          sem = utils.syncBarrier(count, function (err) {
             count.should.equal(0);
+            should.not.exist(err);
             done();
           });
-        do {
+        while (count > 0) {
           count -= 1;
           sem();
-        } while (count > 0);
+        }
+      });
+    });
+
+    describe('#doWhen', function () {
+      it('should exist', function (done) {
+        (!!utils.doWhen).should.equal(true);
+        done();
+      });
+      it('should wait until the condition becomes true', function (done) {
+        var
+          waitingVar = false;
+        utils.doWhen(function () {return waitingVar;}, function () {
+          waitingVar.should.equal(true);
+          done();
+        });
+
+        setTimeout(function () {
+          waitingVar = true;
+        }, 50);
+      });
+    });
+
+    describe('#getMutex', function () {
+      it('should exist', function (done) {
+        (!!utils.getMutex).should.equal(true);
+        done();
+      });
+      describe('mutex not in use', function () {
+        it('should execute the callback immediately', function (done) {
+          utils.getMutex('blah', function (releaseMutex) {
+            releaseMutex();
+            done();
+          });
+        });
+      });
+      describe('mutex is in use', function () {
+        var
+          mutexName = 'mutex',
+          firstReleased = false,
+          releaseMutex1;
+        beforeEach(function (done) {
+          utils.getMutex(mutexName, function (releaseMutex) {
+            releaseMutex1 = function () {
+              firstReleased = true;
+              releaseMutex();
+            };
+            done();
+          });
+        });
+        it('should execute the callback after releasing the first call', function (done) {
+          utils.getMutex(mutexName, function (releaseMutex) {
+            releaseMutex();
+            firstReleased.should.equal(true);
+            done();
+          });
+          releaseMutex1();
+        });
       });
     });
 
