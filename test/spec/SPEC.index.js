@@ -35,6 +35,26 @@
     });
 
     describe("#merge()", function () {
+      describe("undefined instead of objects", function () {
+        it("should return first input objects", function () {
+          var
+            obj1 = {key3: 3, key4: 4},
+            obj2 = undefined,
+            expectedObj = {key3: 3, key4: 4},
+            mergedObj = utils.merge(obj1, obj2);
+
+          JSON.stringify(expectedObj).should.equal(JSON.stringify(mergedObj));
+        });
+        it("should return second input objects", function () {
+          var
+            obj1 = undefined,
+            obj2 = {key3: 3, key4: 4},
+            expectedObj = {key3: 3, key4: 4},
+            mergedObj = utils.merge(obj1, obj2);
+
+          JSON.stringify(expectedObj).should.equal(JSON.stringify(mergedObj));
+        });
+      });
       describe("no common keys", function () {
         it("should return an object with all key-vals from both input objects", function () {
           var obj1 = {key1: 1, key2: 2},

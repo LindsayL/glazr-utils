@@ -46,6 +46,8 @@ utils.matchExists = function (array1, array2) {
 utils.merge = function (obj1, obj2) {
   var key;
 
+  obj1 = obj1 || {};
+
   // Add obj2 properties
   for (key in obj2) {
     if (obj2.hasOwnProperty(key)) {

@@ -1,6 +1,6 @@
 {
   "name": "glazr-utils",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "javascript utilities to support glazr",
   "main": "index.js",
   "scripts": {
@@ -13,6 +13,7 @@
   "author": "glazr",
   "license": "BSD-2-Clause",
   "devDependencies": {
+    "mocha": "^2.2.5",
     "fs-extra": "^0.23.1",
     "path": "^0.11.14",
     "should": "^7.0.4",
