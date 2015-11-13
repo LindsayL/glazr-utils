@@ -256,4 +256,24 @@ utils.forEach = function (object, callback) {
   }
 };
 
+/**
+ * Iterates through all the params of all the objects.
+ * (Eg. All params in all objects in an array in an object param)
+ *
+ * @param object/array - The object or array you wish to iterate through
+ * @param callback(index, array[index]) - called for each iteration
+ */
+utils.forEachRecursive = function (object, callback) {
+  var
+    key;
+
+  key = Object.prototype.toString.call(object);
+  if (key === '[object Array]' || key === '[object Object]') {
+    utils.forEach(object, function (index, value) {
+      callback(index, value);
+      utils.forEachRecursive(value, callback);
+    });
+  }
+};
+
 module.exports = utils;
