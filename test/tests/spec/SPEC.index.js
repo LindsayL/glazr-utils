@@ -1,22 +1,24 @@
 
 /*jslint node:true*/
-/*globals describe, it, before, beforeEach, after, afterEach, vars, path, fse*/
+/*globals describe, it, before, beforeEach, after, afterEach, sinon, path, fse*/
 
 (function () {
   'use strict';
 
-  require('../spec_helper');
+  require('../../support/spec_helper');
 
   var
     should = require('should'),
-    utils = require('../../index.js');
+    utils = require('../../../index.js');
 
   describe("utils", function () {
+
     describe("#log()", function () {
       it("should pass the message to #console.log()", function () {
-        var logSpy = this.sinon.spy(),
+        var
+          logSpy = sinon.spy(),
           message = "some message";
-        this.sinon.stub(console, 'log', logSpy);
+        sinon.stub(console, 'log', logSpy);
 
         utils.log(message);
         logSpy.args[0][0].should.equal(message);
@@ -169,6 +171,78 @@
           releaseMutex1();
         });
       });
+    });
+
+    describe('#forEachRecursive(object, callback', function () {
+      var
+        forEachCalls,
+        object,
+        indexConst = 'index',
+        valueConst = 'value';
+      beforeEach(function () {
+        forEachCalls = 0;
+        sinon.stub(utils, 'forEach', function (object, callback) {
+          /*jslint unparam:true*/
+          forEachCalls += 1;
+          callback(indexConst, valueConst);
+        });
+      });
+      describe('pass a primitive', function () {
+        beforeEach(function () {
+          object = 'hi';
+        });
+        it('should not call forEach', function () {
+          utils.forEachRecursive(object, function (index, value) {
+            /*jslint unparam:true*/
+          });
+          forEachCalls.should.equal(0);
+        });
+        it('should not call the callback', function () {
+          utils.forEachRecursive(object, function (index, value) {
+            /*jslint unparam:true*/
+            should.not.exist('should not get here.');
+          });
+        });
+      });
+      describe('pass an object', function () {
+        beforeEach(function () {
+          object = {};
+        });
+        it('should call forEach', function () {
+          utils.forEachRecursive(object, function (index, value) {
+            /*jslint unparam:true*/
+          });
+          forEachCalls.should.be.greaterThan(0);
+        });
+        it('should call the callback with the result of forEach', function (done) {
+          utils.forEachRecursive(object, function (index, value) {
+            /*jslint unparam:true*/
+            index.should.equal(indexConst);
+            value.should.equal(valueConst);
+            done();
+          });
+        });
+      });
+      describe('pass an array', function () {
+        beforeEach(function () {
+          object = [];
+        });
+        it('should call forEach', function () {
+          utils.forEachRecursive(object, function (index, value) {
+            /*jslint unparam:true*/
+          });
+          forEachCalls.should.be.greaterThan(0);
+        });
+        it('should call the callback with the result of forEach', function (done) {
+          utils.forEachRecursive(object, function (index, value) {
+            /*jslint unparam:true*/
+            index.should.equal(indexConst);
+            value.should.equal(valueConst);
+            done();
+          });
+        });
+      });
+
     });
 
   });
