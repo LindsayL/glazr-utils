@@ -114,6 +114,20 @@
           sem();
         }
       });
+      it('should put errors in an array', function (done) {
+        var
+          count = 3,
+          sem = utils.syncBarrier(count, function (err) {
+            count.should.equal(0);
+            should.exist(err);
+            err.length.should.equal(3);
+            done();
+          });
+        while (count > 0) {
+          count -= 1;
+          sem(count);
+        }
+      });
     });
 
     describe('#doWhen', function () {
