@@ -72,29 +72,29 @@ utils.merge = function (obj1, obj2) {
  * calling it's callback
  *
  * @param syncCalls - The number of calls before we can proceed.
- * @param callback(error) - The function to be called once the required number of
+ * @param callback(errors) - The function to be called once the required number of
  * syncCalls have been made.  If any errors were reported they are passed as
- * an argument to the callback.
+ * an array to the callback.
  * @returns {Function} - The function to be called that will decrement the
  * syncCalls.  Accepts an argument as error.  Should be called without an arg
  * to signify success.
  */
 // TODO test error handling, and invalid inputs
-utils.syncBarrier = function(syncCalls, callback) {
+utils.syncBarrier = function (syncCalls, callback) {
   if (syncCalls < 0) {
     throw new Error('Invalid number of syncCalls');
   }
   if (syncCalls === 0) {
     return callback();
   }
-  var errors = '';
+  var errors = [];
   return function (err) {
-    if (err) {
-      errors += err;
+    if (err !== undefined) {
+      errors.push(err);
     }
     syncCalls -= 1;
     if (syncCalls === 0 && callback) {
-      errors = errors? errors:undefined;  // If no errors returned undefined rather than empty string.
+      errors = errors.length ? errors : undefined;  // If no errors returned undefined rather than empty string.
       callback(errors);
     }
   };
@@ -139,7 +139,8 @@ utils.getMutex = (function () {
             delete mutexesInUse[mutexName];
           }
         });
-      });
+      }
+    );
   };
 }());
 
@@ -234,7 +235,7 @@ utils.createInjectScripts = function (host, relUrls) {
 /**
  * Iterates through an array or params of an object
  *
- * @param object/array - The object or array you wish to iterate through
+ * @param {object} object - The object or array you wish to iterate through
  * @param callback(index, array[index]) - called for each iteration
  */
 // TODO Test
@@ -260,7 +261,7 @@ utils.forEach = function (object, callback) {
  * Iterates through all the params of all the objects.
  * (Eg. All params in all objects in an array in an object param)
  *
- * @param object/array - The object or array you wish to iterate through
+ * @param {object} object - The object or array you wish to iterate through
  * @param callback(index, array[index]) - called for each iteration
  */
 utils.forEachRecursive = function (object, callback) {
