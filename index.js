@@ -21,6 +21,9 @@ utils.log = function (msg) {
  * @param error - The error to print.
  */
 utils.error = function (error) {
+  if (error === undefined || error === null) {
+    return;
+  }
   if (typeof error === 'string') {
     return console.error(error);
   }
