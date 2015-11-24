@@ -51,6 +51,16 @@
           logSpy.args[index][0].should.equal(param);
         });
       });
+      it("should pass the error #console.error()", function () {
+        var
+          logSpy = sinon.spy(),
+          message = "some message";
+        sinon.stub(console, 'error', logSpy);
+
+        utils.error(message);
+        logSpy.args.length.should.equal(1);
+        logSpy.args[0][0].should.equal(message);
+      });
     });
 
     describe("#functionToString()", function () {
