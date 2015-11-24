@@ -16,6 +16,33 @@ utils.log = function (msg) {
 };
 
 /**
+ * Logs an error.
+ *
+ * @param error - The error to print.
+ */
+utils.error = function (error) {
+  if (typeof error === 'string') {
+    return console.error(error);
+  }
+
+  var
+    errParams = [
+      'code',
+      'status',
+      'name',
+      'message',
+      'stack'
+    ];
+
+  utils.forEach(errParams, function (index, param) {
+    /*jslint unparam: true*/
+    if (error[param]) {
+      console.error(error[param]);
+    }
+  });
+};
+
+/**
  * Checks if there is at least one matching entry between the two arrays.
  *
  * @param {Array} array1
@@ -47,6 +74,7 @@ utils.merge = function (obj1, obj2) {
   var key;
 
   obj1 = obj1 || {};
+  obj1 = JSON.parse(JSON.stringify(obj1));
 
   // Add obj2 properties
   for (key in obj2) {

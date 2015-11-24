@@ -25,6 +25,44 @@
       });
     });
 
+    describe("#error()", function () {
+      it("should pass the error params to #console.error()", function () {
+        var
+          logSpy = sinon.spy(),
+          error = {
+            code: 'code',
+            status: 'status',
+            name: 'name',
+            message: 'message',
+            stack: 'stack'
+          },
+          errParams = [
+            'code',
+            'status',
+            'name',
+            'message',
+            'stack'
+          ];
+        sinon.stub(console, 'error', logSpy);
+
+        utils.error(error);
+        logSpy.args.length.should.equal(errParams.length);
+        utils.forEach(errParams, function (index, param) {
+          logSpy.args[index][0].should.equal(param);
+        });
+      });
+      it("should pass the error #console.error()", function () {
+        var
+          logSpy = sinon.spy(),
+          message = "some message";
+        sinon.stub(console, 'error', logSpy);
+
+        utils.error(message);
+        logSpy.args.length.should.equal(1);
+        logSpy.args[0][0].should.equal(message);
+      });
+    });
+
     describe("#functionToString()", function () {
       it("should surround the input function with self executing syntax", function () {
         /*jslint debug:true*/
@@ -69,7 +107,7 @@
         });
       });
       describe("common keys", function () {
-        it("should overwrite the values in the first object", function () {
+        it("should overwrite the values of the first object in the merged object", function () {
           var obj1 = {key1: 1, key2: 2},
             obj2 = {key2: 3333, key4: 4},
             expectedObj = {key1: 1, key2: 3333, key4: 4},
@@ -77,8 +115,17 @@
 
           JSON.stringify(expectedObj).should.equal(JSON.stringify(mergedObj));
         });
-      });
+        it("should not affect first object", function () {
+          var
+            obj1 = {key1: 1, key2: 2},
+            originalObj1 = JSON.stringify(obj1),
+            obj2 = {key2: 3333, key4: 4};
 
+          utils.merge(obj1, obj2);
+
+          originalObj1.should.equal(JSON.stringify(obj1));
+        });
+      });
       describe("nested objects", function () {
         it("should return an object with nested values intact", function () {
           var obj1 = {key1: 1, key2: 2},
