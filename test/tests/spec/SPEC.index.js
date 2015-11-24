@@ -248,6 +248,23 @@
       });
     });
 
+    describe("#forEach()", function () {
+      it("should iterate over an array");
+      it("should iterate over an object's params");
+      it("should not call callback if passed undefined", function () {
+        utils.forEach(undefined, function (index, value) {
+          /*jslint unparam: true*/
+          should.not.exist('should not get here');
+        });
+      });
+      it("should not call callback if passed null", function () {
+        utils.forEach(null, function (index, value) {
+          /*jslint unparam: true*/
+          should.not.exist('should not get here');
+        });
+      });
+    });
+
     describe('#forEachRecursive(object, callback', function () {
       var
         forEachCalls,

@@ -21,9 +21,6 @@ utils.log = function (msg) {
  * @param error - The error to print.
  */
 utils.error = function (error) {
-  if (error === undefined || error === null) {
-    return;
-  }
   if (typeof error === 'string') {
     return console.error(error);
   }
@@ -39,7 +36,7 @@ utils.error = function (error) {
 
   utils.forEach(errParams, function (index, param) {
     /*jslint unparam: true*/
-    if (error[param]) {
+    if (error && error[param]) {
       console.error(error[param]);
     }
   });
@@ -266,23 +263,23 @@ utils.createInjectScripts = function (host, relUrls) {
 /**
  * Iterates through an array or params of an object
  *
- * @param {object} object - The object or array you wish to iterate through
+ * @param {object} obj - The object or array you wish to iterate through
  * @param callback(index, array[index]) - called for each iteration
  */
 // TODO Test
-utils.forEach = function (object, callback) {
+utils.forEach = function (obj, callback) {
   var
     key;
 
-  key = Object.prototype.toString.call(object);
+  key = Object.prototype.toString.call(obj);
   if (key === '[object Array]') {
-    for (key = 0; key < object.length; key += 1) {
-      callback(key, object[key]);
+    for (key = 0; key < obj.length; key += 1) {
+      callback(key, obj[key]);
     }
   } else if (key === '[object Object]') {
-    for (key in object) {
-      if (object.hasOwnProperty(key)) {
-        callback(key, object[key]);
+    for (key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        callback(key, obj[key]);
       }
     }
   }
