@@ -16,6 +16,29 @@ utils.log = function (msg) {
 };
 
 /**
+ * Logs an error.
+ *
+ * @param error - The error to print.
+ */
+utils.error = function (error) {
+  var
+    errParams = [
+      'code',
+      'status',
+      'name',
+      'message',
+      'stack'
+    ];
+
+  utils.forEach(errParams, function (index, param) {
+    /*jslint unparam: true*/
+    if (error[param]) {
+      console.error(error[param]);
+    }
+  });
+};
+
+/**
  * Checks if there is at least one matching entry between the two arrays.
  *
  * @param {Array} array1

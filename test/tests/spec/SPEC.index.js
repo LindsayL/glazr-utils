@@ -25,6 +25,34 @@
       });
     });
 
+    describe("#error()", function () {
+      it("should pass the error params to #console.error()", function () {
+        var
+          logSpy = sinon.spy(),
+          error = {
+            code: 'code',
+            status: 'status',
+            name: 'name',
+            message: 'message',
+            stack: 'stack'
+          },
+          errParams = [
+            'code',
+            'status',
+            'name',
+            'message',
+            'stack'
+          ];
+        sinon.stub(console, 'error', logSpy);
+
+        utils.error(error);
+        logSpy.args.length.should.equal(errParams.length);
+        utils.forEach(errParams, function (index, param) {
+          logSpy.args[index][0].should.equal(param);
+        });
+      });
+    });
+
     describe("#functionToString()", function () {
       it("should surround the input function with self executing syntax", function () {
         /*jslint debug:true*/
