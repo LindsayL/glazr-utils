@@ -107,7 +107,7 @@
         });
       });
       describe("common keys", function () {
-        it("should overwrite the values in the first object", function () {
+        it("should overwrite the values of the first object in the merged object", function () {
           var obj1 = {key1: 1, key2: 2},
             obj2 = {key2: 3333, key4: 4},
             expectedObj = {key1: 1, key2: 3333, key4: 4},
@@ -115,8 +115,17 @@
 
           JSON.stringify(expectedObj).should.equal(JSON.stringify(mergedObj));
         });
-      });
+        it("should not affect first object", function () {
+          var
+            obj1 = {key1: 1, key2: 2},
+            originalObj1 = JSON.stringify(obj1),
+            obj2 = {key2: 3333, key4: 4};
 
+          utils.merge(obj1, obj2);
+
+          originalObj1.should.equal(JSON.stringify(obj1));
+        });
+      });
       describe("nested objects", function () {
         it("should return an object with nested values intact", function () {
           var obj1 = {key1: 1, key2: 2},

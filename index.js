@@ -74,6 +74,7 @@ utils.merge = function (obj1, obj2) {
   var key;
 
   obj1 = obj1 || {};
+  obj1 = JSON.parse(JSON.stringify(obj1));
 
   // Add obj2 properties
   for (key in obj2) {
