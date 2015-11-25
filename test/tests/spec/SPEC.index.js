@@ -61,6 +61,22 @@
         logSpy.args.length.should.equal(1);
         logSpy.args[0][0].should.equal(message);
       });
+      it("should not call #console.error() if passed undefined", function () {
+        var
+          logSpy = sinon.spy();
+        sinon.stub(console, 'error', logSpy);
+
+        utils.error(undefined);
+        logSpy.args.length.should.equal(0);
+      });
+      it("should not call #console.error() if passed null", function () {
+        var
+          logSpy = sinon.spy();
+        sinon.stub(console, 'error', logSpy);
+
+        utils.error(null);
+        logSpy.args.length.should.equal(0);
+      });
     });
 
     describe("#functionToString()", function () {
@@ -80,18 +96,16 @@
         it("should return first input objects", function () {
           var
             obj1 = {key3: 3, key4: 4},
-            obj2 = undefined,
             expectedObj = {key3: 3, key4: 4},
-            mergedObj = utils.merge(obj1, obj2);
+            mergedObj = utils.merge(obj1, undefined);
 
           JSON.stringify(expectedObj).should.equal(JSON.stringify(mergedObj));
         });
         it("should return second input objects", function () {
           var
-            obj1 = undefined,
             obj2 = {key3: 3, key4: 4},
             expectedObj = {key3: 3, key4: 4},
-            mergedObj = utils.merge(obj1, obj2);
+            mergedObj = utils.merge(undefined, obj2);
 
           JSON.stringify(expectedObj).should.equal(JSON.stringify(mergedObj));
         });
@@ -185,7 +199,7 @@
       it('should wait until the condition becomes true', function (done) {
         var
           waitingVar = false;
-        utils.doWhen(function () {return waitingVar;}, function () {
+        utils.doWhen(function () {return waitingVar; }, function () {
           waitingVar.should.equal(true);
           done();
         });
@@ -234,6 +248,23 @@
       });
     });
 
+    describe("#forEach()", function () {
+      it("should iterate over an array");
+      it("should iterate over an object's params");
+      it("should not call callback if passed undefined", function () {
+        utils.forEach(undefined, function (index, value) {
+          /*jslint unparam: true*/
+          should.not.exist('should not get here');
+        });
+      });
+      it("should not call callback if passed null", function () {
+        utils.forEach(null, function (index, value) {
+          /*jslint unparam: true*/
+          should.not.exist('should not get here');
+        });
+      });
+    });
+
     describe('#forEachRecursive(object, callback', function () {
       var
         forEachCalls,
@@ -255,6 +286,7 @@
         it('should not call forEach', function () {
           utils.forEachRecursive(object, function (index, value) {
             /*jslint unparam:true*/
+            return undefined;
           });
           forEachCalls.should.equal(0);
         });
@@ -272,6 +304,7 @@
         it('should call forEach', function () {
           utils.forEachRecursive(object, function (index, value) {
             /*jslint unparam:true*/
+            return undefined;
           });
           forEachCalls.should.be.greaterThan(0);
         });
@@ -291,6 +324,7 @@
         it('should call forEach', function () {
           utils.forEachRecursive(object, function (index, value) {
             /*jslint unparam:true*/
+            return undefined;
           });
           forEachCalls.should.be.greaterThan(0);
         });
