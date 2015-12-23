@@ -208,10 +208,10 @@ utils.functionToString = function (func) {
 utils.createCustomScript = function (content) {
   var func = this.functionToString(function () {
     /*jslint browser: true*/
-    var script = document.createElement('script');
+    var script = window.document.createElement('script');
     script.async = false;
     script.innerHTML = '{{content}}';
-    document.body.appendChild(script);
+    window.document.body.appendChild(script);
   });
   return func.replace('{{content}}', content);
 };
@@ -228,10 +228,10 @@ utils.createCustomScript = function (content) {
 utils.createInjectScript = function (url) {
   var func = this.functionToString(function () {
     /*jslint browser: true*/
-    var script = document.createElement('script');
+    var script = window.document.createElement('script');
     script.async = false;
     script.src = '{{url}}';
-    document.body.appendChild(script);
+    window.document.body.appendChild(script);
   });
   return func.replace('{{url}}', url);
 };
